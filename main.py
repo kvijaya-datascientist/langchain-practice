@@ -1,0 +1,29 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+from langchain_openai import ChatOpenAI
+from langchain_tavily import TavilySearch
+from langchain.agents.react.agent import create_react_agent
+from langchain.agents import AgentExecutor
+from langchain import hub
+
+tools = [TavilySearch()]
+llm = ChatOpenAI(model="gpt-4", temperature=0)
+react_prompt = hub.pull("hwchase17/react")
+
+agent = create_react_agent(llm=llm, tools=tools, prompt=react_prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+chain = agent_executor
+def main():
+    #print("Hello from langchain-practice!")
+    result = chain.invoke(
+        input={
+            "input" : "please provide summary about vijaya lakshmi kaja and she is a software craftmen."
+        }
+    )
+    print(result)
+
+if __name__ == "__main__":
+    main()
